@@ -11,12 +11,15 @@ import { Creators as navigationActions } from '../../store/ducks/navigation';
 import AddIcon from '../../components/svg/add';
 import ImportIcon from '../../components/svg/import';
 import ExportIcon from '../../components/svg/export';
+
 import ConfirmButton from '../../components/confirmButton';
+import Input from '../../components/input';
+
+import NewColorModal from '../../components/newColorModal';
 
 import {
   Container,
   InputGroup,
-  Input,
   Textarea,
   ListHeader,
   ListHeaderButton,
@@ -107,28 +110,33 @@ const Palette = () => {
   ), [palette]);
 
   return (
-    <Container>
-      <Input />
+    <>
+      <Container>
+        <Input
+          placeholder={'Nome da paleta'}
+          value={palette?.name}
+          onChangeText={text => setPalette({ ...palette, name: text })} />
 
-      {descriptionComponent}
-      
-      <ListHeader>
-        <ListHeaderButton>
-          <ExportIcon fill={theme.colors.primary}/>
-        </ListHeaderButton>
-        <ListHeaderButton>
-          <ImportIcon fill={theme.colors.primary}/>
-        </ListHeaderButton>
-        <ListHeaderButton>
-          <AddIcon fill={theme.colors.primary}/>
-        </ListHeaderButton>
-      </ListHeader>
-      
-      <ListContainer>
-        {colorsComponent}
-        <CountWhiteSpace />
-      </ListContainer>
-      {/* <InputGroup>
+        {descriptionComponent}
+
+        <ListHeader>
+          <ListHeaderButton>
+            <ExportIcon fill={theme.colors.primary} />
+          </ListHeaderButton>
+          <ListHeaderButton>
+            <ImportIcon fill={theme.colors.primary} />
+          </ListHeaderButton>
+          <ListHeaderButton>
+            <AddIcon fill={theme.colors.primary} />
+          </ListHeaderButton>
+        </ListHeader>
+
+        <ListContainer>
+          {colorsComponent}
+          <CountWhiteSpace />
+        </ListContainer>
+
+        {/* <InputGroup>
         <ControlQuantityButton onPress={() => setQuantity(-1)}>
           <ArrowLeft fill={theme.colors.primary} />
         </ControlQuantityButton>
@@ -142,8 +150,11 @@ const Palette = () => {
         </ControlQuantityButton>
       </InputGroup> */}
 
-      {/* <ConfirmButton onPress={confirmChanges} disabled={false} text={'Salvar paleta'} /> */}
-    </Container>
+        <ConfirmButton onPress={confirmChanges} disabled={false} text={'Salvar paleta'} />
+
+      </Container>
+      <NewColorModal toggleModal={() => { }} />
+    </>
   );
 }
 

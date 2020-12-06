@@ -1,8 +1,6 @@
 import styled, { DefaultTheme } from 'styled-components/native';
 import { Dimensions } from 'react-native';
 import { lighten, transparentize } from 'polished';
-import { Checkbox } from 'react-native-paper';
-import { Props } from 'react-native-paper/lib/typescript/src/components/RadioButton/RadioButtonItem';
 
 const { width, height } = (Dimensions.get('window'));
 
