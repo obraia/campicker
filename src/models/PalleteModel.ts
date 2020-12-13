@@ -1,19 +1,19 @@
-import { IColor, IPallete,  } from "../interfaces"; 
+import { IColor, IPalette,  } from "../interfaces"; 
 import newID from '../utils/generateID';
 
-class PalleteModel implements IPallete {
+class PaletteModel implements IPalette {
     id: string;
     name: string;
     description: string;
     colors: IColor[];
     modifiedDate: number;
 
-    constructor(name: string, description: string, modifiedDate: number, colors: IColor[]) {
+    constructor(name: string, description: string, colors: IColor[], modifiedDate?: number) {
         this.id = newID();
         this.name = name;
         this.description = description;
         this.colors = colors;
-        this.modifiedDate = modifiedDate;
+        this.modifiedDate = 0;
     }
 
     insertColor(color: IColor) {
@@ -30,4 +30,4 @@ class PalleteModel implements IPallete {
     }
 }
 
-export default PalleteModel;
+export default PaletteModel;

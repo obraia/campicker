@@ -20,12 +20,13 @@ export interface IMenuState {
 }
 
 export interface IPaletteState {
-  palettes: IPalette[]
+  palettes: IPalette[];
+  selectedPalette: IPalette;
 }
 
 
 export interface IProductState {
-  products: IProduct[]
+  products: IProduct[];
 }
 
 export interface IUser {
@@ -56,7 +57,7 @@ export interface IPalette {
   name: string;
   description: string;
   colors: IColor[];
-  modifiedDate: number;
+  modifiedDate?: number;
   insertColor? (color: IColor): void;
   removeColor? (color: IColor): void;
   getDate? (): string;

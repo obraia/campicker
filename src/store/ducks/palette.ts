@@ -2,8 +2,10 @@ import { createActions, createReducer } from 'reduxsauce';
 
 import { IPaletteState, IPalette } from "../../interfaces";
 import PalleteModel from '../../models/PalleteModel';
+import newID from '../../utils/generateID';
 
 const INITIAL_STATE: IPaletteState = {
+  selectedPalette: new PalleteModel('', '', []),
   palettes: [
     {
       id: '0001',
@@ -176,6 +178,13 @@ const INITIAL_STATE: IPaletteState = {
         },
       ],
       modifiedDate: 1000000
+    },
+    {
+      id: '0000',
+      name: '',
+      description: '',
+      colors: [],
+      modifiedDate: 1000000
     }
   ]
 }
@@ -186,21 +195,95 @@ const importPalettes = (state = INITIAL_STATE, action: any) => {
   return { ...state };
 }
 
+const selectPalette = (state = INITIAL_STATE, action: any) => {
+  const palette = state.palettes.find(p => p.id === action.paletteId);
+  return { ...state, selectedPalette: palette! };
+}
+
 const updatePalette = (state = INITIAL_STATE, action: any) => {
-  state.palettes[action.index] = action.palette;
-  return { ...state };
+  const palettes: IPalette[] = state.palettes.map(p => ({ ...p, colors: [...p.colors] }));
+  const paletteIndex = palettes.findIndex(p => p.id === action.palette.id);
+
+  if (paletteIndex !== -1) {
+    if (action.palette.id === '0000') {
+      action.palette.id = newID();
+      palettes.push({
+        id: '0000',
+        name: '',
+        description: '',
+        colors: [],
+        modifiedDate: 1000000
+      });
+    }
+    palettes[paletteIndex] = action.palette;
+  }
+
+  return { palettes, selectedPalette: { ...action.palette } };
+}
+
+
+const deletePalette = (state = INITIAL_STATE, action: any) => {
+  const palettes: IPalette[] = state.palettes.map(p => ({ ...p, colors: [...p.colors] }));
+  const paletteIndex = palettes.findIndex(p => p.id === action.paletteId);
+
+  if (paletteIndex !== -1) palettes.splice(paletteIndex, 1);
+
+  return { palettes, selectedPalette: {} as IPalette };
+}
+
+const insertColor = (state = INITIAL_STATE, action: any) => {
+  const palettes: IPalette[] = state.palettes.map(p => ({ ...p, colors: [...p.colors] }));
+
+  const palette = palettes.find(p => p.id === action.paletteId);
+  if (palette) palette.colors.push(action.color)
+
+  return { palettes, selectedPalette: palette! };
+}
+
+const updateColor = (state = INITIAL_STATE, action: any) => {
+  const palettes: IPalette[] = state.palettes.map(p => ({ ...p, colors: [...p.colors] }));
+  const palette = palettes.find(p => p.id === action.paletteId);
+
+  if (palette) {
+    const colorIndex = palette.colors.findIndex(c => c.id === action.color.id);
+    if (colorIndex !== -1) palette.colors[colorIndex] = action.color;
+  }
+
+  return { palettes, selectedPalette: palette! };
+}
+
+const deleteColor = (state = INITIAL_STATE, action: any) => {
+  const palettes: IPalette[] = state.palettes.map(p => ({ ...p, colors: [...p.colors] }));
+
+  const palette = palettes.find(p => p.id === action.paletteId);
+
+  if (palette) {
+    const colorIndex = palette.colors.findIndex(c => c.id === action.colorId)
+    if (colorIndex !== -1) palette.colors.splice(colorIndex, 1);
+  }
+  return { palettes, selectedPalette: palette! };
 }
 
 // Making Types and Creators
 export const { Types, Creators } = createActions({
+  selectPalette: ['paletteId'],
   importPalettes: ['value'],
-  updatePalette: ['palette', 'index']
+  updatePalette: ['palette'],
+  deletePalette: ['paletteId'], 
+  insertColor: ['paletteId', 'color'],
+  updateColor: ['paletteId', 'color'],
+  deleteColor: ['paletteId', 'colorId'],
 });
 
 // Making reducer
 export default createReducer(INITIAL_STATE, {
+  [Types.SELECT_PALETTE]: selectPalette,
   [Types.IMPORT_PALETTES]: importPalettes,
   [Types.UPDATE_PALETTE]: updatePalette,
+  [Types.DELETE_PALETTE]: deletePalette,
+  [Types.INSERT_COLOR]: insertColor,
+  [Types.UPDATE_COLOR]: updateColor,
+  [Types.DELETE_COLOR]: deleteColor,
 });
 
 const utils = {

@@ -28,7 +28,7 @@ const Routes = () => {
           <Route exact path='/import' component={Import} />
           <Route exact path='/export' component={Export} />
           <Route exact path='/search' component={Search} />
-          <Route exact path='/palette/:index/:previous?' component={Palette} />
+          <Route exact path='/palette' component={Palette} />
         </>}
     </Switch>
   )

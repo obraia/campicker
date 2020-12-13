@@ -4,6 +4,7 @@ import {  useHistory } from "react-router-native";
 
 import { IReducers } from '../../interfaces';
 import { Creators as navigationActions } from '../../store/ducks/navigation';
+import { Creators as paletteActions } from '../../store/ducks/palette';
 
 import ListIcon from '../svg/list';
 import SwatchbookIcon from '../svg/swatchbook';
@@ -29,6 +30,12 @@ const Navbar = () => {
     history.push(endpoint)
   }
 
+  const goToNewPalette = () => {
+    dispatch(paletteActions.selectPalette('0000'));
+    dispatch(navigationActions.goTo('Nova paleta'));
+    history.push('palette');
+  }
+
   return (
     <Container style={{
       shadowColor: "#000", shadowOffset: {
@@ -46,7 +53,7 @@ const Navbar = () => {
         </Button>
       </ButtonContainer>
 
-      <ButtonContainer onPress={() => goTo('/add', 'Paletas')}>
+      <ButtonContainer onPress={goToNewPalette}>
         <Button
           style={{ backgroundColor: page === 'Nova paleta' ? theme.colors.primary : '#0000000a' }}>
           <AddIcon fill={page === 'Nova paleta' ? theme.colors.textPrimary : theme.colors.primary} />

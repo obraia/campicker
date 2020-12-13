@@ -1,12 +1,11 @@
 import React, { memo, useMemo, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import moment from 'moment';
 import { useHistory, useParams } from "react-router-native";
 
-import { IReducers, IProduct, IPalette } from '../../interfaces';
+import { IReducers, IProduct, IPalette, IColor } from '../../interfaces';
 import { Creators as navigationActions } from '../../store/ducks/navigation';
-
+import { Creators as paletteActions } from '../../store/ducks/palette';
 
 import AddIcon from '../../components/svg/add';
 import ImportIcon from '../../components/svg/import';
@@ -15,7 +14,7 @@ import ExportIcon from '../../components/svg/export';
 import ConfirmButton from '../../components/confirmButton';
 import Input from '../../components/input';
 
-import NewColorModal from '../../components/newColorModal';
+import NewColorModal from '../../components/colorModal';
 
 import {
   Container,
@@ -29,93 +28,105 @@ import {
   ItemText,
   CountWhiteSpace,
 } from './styles';
+import { PaletteDescription } from '../../components/palette/styles';
+import PaletteModel from '../../models/PalleteModel';
 
 interface IPageParams {
-  index: string;
+  paletteId: string;
   previous: string;
 }
 
 const Palette = () => {
   // console.log('[Page render] Product');
 
-  const { index, previous } = useParams<IPageParams>();
   const history = useHistory();
 
   const { theme } = useSelector((state: IReducers) => state.themeReducers);
-  const { palettes } = useSelector((state: IReducers) => state.paletteReducers);
+  const { selectedPalette } = useSelector((state: IReducers) => state.paletteReducers);
+
   const dispatch = useDispatch();
 
-  const [palette, setPalette] = useState<IPalette>({ ...palettes[parseInt(index)] });
-  const [productQuantity, setProductQuantity] = useState(0);
-  const [hadDeletes, setHadDeletes] = useState(false);
-  const [deletedAll, setDeletedAll] = useState(false);
+  const [paletteName, setPaletteName] = useState('');
+  const [paletteDescription, setPaletteDescription] = useState('');
+  const [colorToEdit, setColorToEdit] = useState<IColor>();
+  const [colorModalIsOpen, setcColorModalIsOpen] = useState(false);
 
-  const setQuantity = (value: Number) => {
-    const newValue = Number(productQuantity) + Number(value);
-    if (newValue >= 0 && newValue <= 9999) setProductQuantity(newValue);
-  }
-
-  const setDirectQuantity = (value: string) => {
-    const quantity = isNaN(Number(value)) ? 0 : Number(value);
-    setProductQuantity(quantity);
+  const editColor = (color: IColor) => {
+    setColorToEdit({ ...color });
+    toggleColorModal();
   }
 
   const deleteColorById = (id: string) => {
-    Alert.alert("Atenção!", "Tem certeza que deseja apagar a cor?", [
+    Alert.alert("Atenção!", "Tem certeza que deseja apagar essa cor?", [
       {
         text: "Cancelar",
         onPress: () => null,
         style: "cancel"
       },
-      { text: "Sim", onPress: () => confirmDelete() }
+      { text: "Sim", onPress: () => confirmDelete(id) }
     ]);
 
-    const confirmDelete = () => {
-      const newPalette: IPalette = { ...palette, colors: [...palette.colors] };
-      // newPalette.colors.splice(indexCount, 1);
-      setPalette(newPalette);
-      setHadDeletes(true);
+    const confirmDelete = (colorId: string) => {
+      dispatch(paletteActions.deleteColor(selectedPalette.id, colorId));
     }
   }
 
-  const confirmChanges = () => {
+  const submitPalette = () => {
+    const newPalette: IPalette = new PaletteModel(paletteName, paletteDescription, [...selectedPalette.colors]);
+    newPalette.id = selectedPalette.id;
+
+    dispatch(paletteActions.updatePalette(newPalette));
     dispatch(navigationActions.goTo('Paletas'));
+
     history.push('/home');
-    // if (previous == 'search') {
-    //   dispatch(navigationActions.goTo('Buscar produto'));
-    //   history.push('/search');
-    // } else {
-    //   dispatch(navigationActions.goTo('Paletas'));
-    //   history.push('/');
-    // }
   }
+
+  const toggleColorModal = () => {
+    setcColorModalIsOpen(!colorModalIsOpen);
+  }
+
+  const newColor = () => {
+    setColorToEdit(undefined);
+    toggleColorModal();
+  }
+
+  useEffect(() => {
+    if (selectedPalette) {
+      setPaletteName(selectedPalette.name);
+      setPaletteDescription(selectedPalette.description);
+    }
+  }, [])
 
   const descriptionComponent = useMemo(() => (
     <Textarea placeholder={'Descrição do produto'}
       multiline={true}
       numberOfLines={4}
-      value={palette?.description}
-      onChangeText={text => setPalette({ ...palette, description: text })}
+      value={paletteDescription}
+      onChangeText={text => setPaletteDescription(text)}
       editable={true}
       textAlignVertical="top" />
-  ), [palette]);
+  ), [paletteDescription]);
 
   const colorsComponent = useMemo(() => (
-    palette?.colors.map(color => (
-      <ItemButton key={color.id} onLongPress={() => deleteColorById(color.id)}>
+    selectedPalette.colors.map(color => (
+      <ItemButton
+        key={color.id}
+        onPress={() => editColor(color)}
+        onLongPress={() => deleteColorById(color.id)}>
         <ItemColorPreview style={{ backgroundColor: color.hex }} />
         <ItemText children={`${color.name} - ${color.hex}`} />
       </ItemButton>
     ))
-  ), [palette]);
+  ), [selectedPalette.colors]);
 
   return (
     <>
       <Container>
         <Input
           placeholder={'Nome da paleta'}
-          value={palette?.name}
-          onChangeText={text => setPalette({ ...palette, name: text })} />
+          value={paletteName}
+          onChangeText={text => setPaletteName(text)}
+          mb={10} />
 
         {descriptionComponent}
 
@@ -126,7 +137,7 @@ const Palette = () => {
           <ListHeaderButton>
             <ImportIcon fill={theme.colors.primary} />
           </ListHeaderButton>
-          <ListHeaderButton>
+          <ListHeaderButton onPress={newColor}>
             <AddIcon fill={theme.colors.primary} />
           </ListHeaderButton>
         </ListHeader>
@@ -150,10 +161,14 @@ const Palette = () => {
         </ControlQuantityButton>
       </InputGroup> */}
 
-        <ConfirmButton onPress={confirmChanges} disabled={false} text={'Salvar paleta'} />
+        <ConfirmButton onPress={submitPalette} disabled={false} text={'Salvar paleta'} />
 
       </Container>
-      <NewColorModal toggleModal={() => { }} />
+      {colorModalIsOpen &&
+        <NewColorModal
+          toggleModal={toggleColorModal}
+          paletteId={selectedPalette.id}
+          color={colorToEdit} />}
     </>
   );
 }

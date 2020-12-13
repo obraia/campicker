@@ -11,7 +11,6 @@ export const Container = styled.View`
 
 export const Modal = styled.View`
   width: 100%;
-  height: 40%;
   /* border: 1px solid ${props => props.theme.colors.textBackground}; */
   border-radius: 15px;
   background-color: ${props => props.theme.colors.background};
@@ -42,8 +41,8 @@ export const CloseButton = styled.TouchableOpacity`
   border-radius: 100px;
 `;
 
-export const Body = styled.ScrollView`
-  flex: 1;
+export const Body = styled.View`
+  padding: 10px;
 `;
 
 export const Item = styled.View`
@@ -59,14 +58,31 @@ export const ItemTitle = styled.Text`
   color: ${props => props.theme.colors.textBackground};
 `;
 
-export const Footer = styled.TouchableOpacity`
+export const Footer = styled.View`
   width: 100%;
   height: 50px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
+  padding: 0 10px;
   background-color: ${props => lighten(0.1, props.theme.colors.background)};
+`;
+
+export const ColorPreview = styled.View`
+  flex: 3;
+  height: 30px;
+  margin-right: 10px;
+  border: 1px solid ${props => props.theme.colors.primary};
+  border-radius: 10px;
+  background-color: ${props => props.theme.colors.background};
+`;
+
+export const FooterButton = styled.TouchableOpacity`
+  flex: 1;
+  height: 30px;
+  border-radius: 10px;
+  background-color: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.textPrimary};
 `;
 
 export const FooterText = styled.Text`

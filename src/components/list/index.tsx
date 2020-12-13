@@ -24,14 +24,15 @@ const List = () => {
   const { theme } = useSelector((state: IReducers) => state.themeReducers);
   const { palettes } = useSelector((state: IReducers) => state.paletteReducers);
 
-  const [items, setItems] = useState(palettes);
+
+  const [items, setItems] = useState(palettes.filter(p => p.id !== '0000'));
   const [pageNumber, setPageNumber] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    setNumberOfPages(Math.round(items.length / itemsPerPage));
-  }, [items.length]);
+    setNumberOfPages(Math.round(palettes.length / itemsPerPage));
+  }, [palettes.length]);
 
   const filter = (value: string) => {
     const filteredItems = palettes.filter(p => p.name.toLowerCase().includes(value.toLowerCase()));
@@ -59,12 +60,14 @@ const List = () => {
         </ContainerButton>
       </HeaderContainer>
 
-      {items?.slice(pageNumber * itemsPerPage, (pageNumber + 1) * itemsPerPage).map((pallete, index) =>
-        <Pallete key={index} pallete={pallete} index={(pageNumber * itemsPerPage) + index} />
-      )}
+      {palettes?.slice(pageNumber * itemsPerPage, (pageNumber + 1) * itemsPerPage)
+        .filter(p => p.id !== '0000')
+        .map((pallete, index) =>
+          <Pallete key={index} pallete={pallete} index={(pageNumber * itemsPerPage) + index} />
+        )}
 
       <HeaderContainer>
-        <PaginationDetails>Total: {items.length} - Página: {pageNumber + 1}/{numberOfPages + 1} </PaginationDetails>
+        <PaginationDetails>Total: {palettes.length} - Página: {pageNumber + 1}/{numberOfPages + 1} </PaginationDetails>
 
         <ContainerButton onPress={previousPage} onLongPress={() => setPageNumber(0)}>
           <ArrowLeftIcon fill={theme.colors.primary} size={'25px'} />
