@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, ExpoCamera } from './styles';
+import { Container, ExpoCamera, ButtonShot, InnerButtonShot } from './styles';
 
-const Camera = (props: { cameraRef: React.MutableRefObject<null> }) => {
+const Camera = (props: { cameraRef: React.MutableRefObject<null>, takePicture?: () => void }) => {
 
   const [hasPermission, setHasPermission] = useState(false);
 
@@ -18,6 +18,9 @@ const Camera = (props: { cameraRef: React.MutableRefObject<null> }) => {
       <ExpoCamera
         ref={props.cameraRef}
         ratio={'1:1'} />
+      <ButtonShot onPress={props.takePicture}>
+        <InnerButtonShot />
+      </ButtonShot>
     </Container>
   );
 }

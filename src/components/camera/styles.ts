@@ -7,7 +7,7 @@ import { Camera } from 'expo-camera';
 const { width, height } = Dimensions.get('window');
 
 export const Container = styled.TouchableOpacity`
-  flex: 1;
+ 
   justify-content: center;
   align-items: center;
   margin-bottom: 10px;
@@ -25,5 +25,22 @@ export const BarCodeScanner = styled(Scanner)`
 export const ExpoCamera = styled(Camera)`
   width: ${width}px;
   height: ${width}px;
-  /* height: ${width * (4 / 3)}; */
+`;
+
+export const ButtonShot = styled.TouchableOpacity`
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  bottom: 20px;
+  justify-content: center;
+  align-items:center;
+  border-radius: 40px;
+  background-color: #efefef;
+`;
+
+export const InnerButtonShot = styled.View`
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: ${props => lighten(0.05, props.theme.colors.primary)};
 `;

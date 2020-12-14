@@ -20,7 +20,7 @@ import {
   ColorsQuantity
 } from './styles';
 
-const Pallete = (props: { pallete: IPalette, index: number }) => {
+const Pallete = (props: { pallete: IPalette}) => {
 
   const dispatch = useDispatch();
   const history = useHistory();

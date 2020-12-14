@@ -48,6 +48,7 @@ export interface IColor {
   name: string;
   description: string;
   hex: string;
+  rgb: IRGB;
   modifiedDate: number;
   average?: number;
 }
@@ -61,6 +62,12 @@ export interface IPalette {
   insertColor? (color: IColor): void;
   removeColor? (color: IColor): void;
   getDate? (): string;
+}
+
+export interface IRGB {
+  R: number;
+  G: number;
+  B: number;
 }
 
 export interface IQuantity {

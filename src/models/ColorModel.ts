@@ -1,11 +1,13 @@
-import { IColor } from "../interfaces";
+import { IColor, IRGB } from "../interfaces";
 import newID from '../utils/generateID';
+import hexToRgb from '../utils/hexToRgb';
 
 class ColorModel implements IColor {
     id: string;
     name: string;
     description: string;
     hex: string;
+    rgb: IRGB;
     modifiedDate: number;
 
     constructor(name: string, description: string, hex: string) {
@@ -13,6 +15,7 @@ class ColorModel implements IColor {
         this.name = name;
         this.description = description;
         this.hex = hex;
+        this.rgb = hexToRgb(hex);
         this.modifiedDate = new Date().getTime();
     }
 

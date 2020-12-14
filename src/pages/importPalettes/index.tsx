@@ -5,12 +5,14 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { useHistory } from "react-router-native";
 
-import ProductModel from '../../models/ProductModel';
-import { IReducers, IProduct } from '../../interfaces';
+import PaletteModel from '../../models/PalleteModel';
+
+import { IReducers, IProduct, IPalette } from '../../interfaces';
 import { Creators as paletteActions } from '../../store/ducks/palette';
 import { Creators as navigationActions } from '../../store/ducks/navigation';
 
 import UploadIcon from '../../components/svg/upload';
+import Input from '../../components/input';
 import ConfirmButton from '../../components/confirmButton';
 
 import {
@@ -22,6 +24,7 @@ import {
   PreviewLine,
   PreviewLineText,
 } from './styles';
+import ColorModel from '../../models/ColorModel';
 
 const ImportFile = () => {
   // console.log('[Page render] Import products');
@@ -32,30 +35,23 @@ const ImportFile = () => {
   const dispatch = useDispatch();
 
   const [fileName, setFileName] = useState('');
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const [palettes, setPalettes] = useState<IPalette[]>([]);
   const [confirmButtonEnable, setConfirmButtonEnable] = useState(false);
 
   const onpenFileDialog = async () => {
-    const fileSelected = await DocumentPicker.getDocumentAsync({ type: 'text/*' });
+    const fileSelected = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
     setFileName(fileSelected.name);
 
     try {
       if (fileSelected.type === "success") {
-        let file = await FileSystem.readAsStringAsync(fileSelected.uri, { encoding: FileSystem.EncodingType.UTF8 });
+        const file = await FileSystem.readAsStringAsync(fileSelected.uri, { encoding: FileSystem.EncodingType.UTF8 });
+        const data = JSON.parse(file);
 
-        file = file.replace(/"/g, "");
-        const lines = file.split(/\r?\n/g);
-        const products = [];
+        const auxPalettes = data.map((p: any) =>
+          new PaletteModel(p.name, p.description, p.colors.map((c: any) =>
+            new ColorModel(c.name, c.description, c.hex))));
 
-        for (let i = 0; i < lines.length; i++) {
-          const product = lines[i].split(';');
-
-          if (lines[i] && (product[0] + product[2]).length > 2) {
-            products.push(new ProductModel(product[0], product[1], product[2].replace(/(\r\n|\n|\r)/gm, ""), product[3]));
-          }
-        }
-
-        setProducts(products);
+        setPalettes(auxPalettes);
         setConfirmButtonEnable(true);
       }
     } catch (err) {
@@ -63,15 +59,15 @@ const ImportFile = () => {
     }
   }
 
-  const deleteLineByCode = (barcode: string) => {
-    const newArrayProducts = products.filter(p => p.barcodeA !== barcode);
-    setProducts([...newArrayProducts]);
+  const deleteLine = (index: number) => {
+    // const newArrayProducts = products.filter(p => p.barcodeA !== barcode);
+    // setProducts([...newArrayProducts]);
   }
 
   const importFile = () => {
-    dispatch(paletteActions.importPalette(products));
+    dispatch(paletteActions.importPalettes(palettes));
     dispatch(navigationActions.goTo('Paletas'));
-    history.push('/')
+    history.push('/home')
   }
 
   return (
@@ -79,13 +75,13 @@ const ImportFile = () => {
       <ImportButton onPress={onpenFileDialog}>
         <UploadIcon fill={theme.colors.primary} />
       </ImportButton>
-      <FileName value={fileName} placeholder={'Nome do arquivo'} editable={false} />
+      <Input value={fileName} placeholder={'Nome do arquivo'} editable={false} />
       <PreviewContainer>
-        {products.slice(0, 5).map(product => (
-          <PreviewLine key={(product.barcodeA + product.barcodeB)}
-            onLongPress={() => deleteLineByCode(product.barcodeA)}>
+        {palettes?.slice(0, 5).map((p, index) => (
+          <PreviewLine key={p.id}
+            onLongPress={() => deleteLine(index)}>
             <PreviewLineText>
-              {product.barcodeA + ';' + product.description + ';' + product.barcodeB + ';' + product.expectedCount}
+              {p.name + ' - ' + p.description}
             </PreviewLineText>
           </PreviewLine>
         ))}

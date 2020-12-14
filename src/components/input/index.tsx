@@ -5,9 +5,10 @@ const SimpleInput = (props: {
   placeholder: string,
   password?: boolean,
   value: string,
+  editable?: boolean,
   mt?: number,
   mb?: number,
-  onChangeText: (value: string) => void
+  onChangeText?: (value: string) => void
 }) => {
 
   return (
@@ -15,7 +16,8 @@ const SimpleInput = (props: {
       placeholder={props.placeholder}
       secureTextEntry={props.password}
       value={props.value}
-      onChangeText={props.onChangeText} 
+      onChangeText={props.onChangeText}
+      editable={props.editable}
       style={{marginTop: props.mt, marginBottom: props.mb}}/>
   );
 }

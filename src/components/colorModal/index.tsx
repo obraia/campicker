@@ -23,8 +23,14 @@ import {
   FooterText,
   OutsideArea
 } from './styles';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-const NewColorModal = (props: { toggleModal: () => void, paletteId: string, color?: IColor }) => {
+const NewColorModal = (props: {
+  toggleModal: () => void,
+  colors: IColor[],
+  setColors: (color: IColor[]) => void,
+  colorIndex: number
+}) => {
   // console.log('[Menu] render');
 
   const [colorName, setColorName] = useState('');
@@ -36,11 +42,15 @@ const NewColorModal = (props: { toggleModal: () => void, paletteId: string, colo
   const submitColor = () => {
     const color = new ColorModel(colorName, colorDescription, colorHex);
 
-    if (!props.color) {
-      dispatch(paletteActions.insertColor(props.paletteId, color));
+    if (props.colorIndex === -1) {
+      props.setColors([...props.colors, color]);
+      // dispatch(paletteActions.insertColor(props.paletteId, color));
     } else {
-      color.id = props.color.id;
-      dispatch(paletteActions.updateColor(props.paletteId, color));
+      color.id = props.colors[props.colorIndex].id;
+      const auxColors = [...props.colors];
+      auxColors[props.colorIndex] = color;
+      props.setColors([...auxColors]);
+      // dispatch(paletteActions.updateColor(props.paletteId, color));
     }
 
     props.toggleModal();
@@ -57,12 +67,12 @@ const NewColorModal = (props: { toggleModal: () => void, paletteId: string, colo
   // }, [colorName, colorHex])
 
   useEffect(() => {
-    if (props.color) {
-      setColorName(props.color.name);
-      setColorDescription(props.color.description);
-      setColorHex(props.color.hex);
+    if (props.colorIndex !== -1) {
+      setColorName(props.colors[props.colorIndex].name);
+      setColorDescription(props.colors[props.colorIndex].description);
+      setColorHex(props.colors[props.colorIndex].hex);
     }
-  }, [props.color])
+  }, [props.colorIndex])
 
 
   return (
@@ -71,7 +81,7 @@ const NewColorModal = (props: { toggleModal: () => void, paletteId: string, colo
       <Container>
         <Modal>
           <Header>
-            {props.color ? <Title>Editar cor</Title> : <Title>Nova cor</Title>}
+            {props.colorIndex !== -1 ? <Title>Editar cor</Title> : <Title>Nova cor</Title>}
             <CloseButton onPress={props.toggleModal} />
           </Header>
           <Body>

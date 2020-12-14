@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { darken, lighten } from 'polished';
+import { darken, lighten, transparentize } from 'polished';
 
 export const Container = styled.View`
   flex: 1;
@@ -25,7 +25,9 @@ export const Input = styled.TextInput`
   color: ${props => props.theme.colors.textBackground};
 `;
 
-export const Textarea = styled.TextInput`
+export const Textarea = styled.TextInput.attrs(props => ({
+  placeholderTextColor: transparentize(0.5, props.theme.colors.textBackground)
+}))`
   flex: 1;
   justify-content: flex-start;
   border-radius: 10px;

@@ -6,8 +6,8 @@ import { IReducers } from './interfaces';
 
 import Auth from './pages/auth';
 import Home from './pages/home';
-import Import from './pages/importProducts';
-import Export from './pages/exportProducts';
+import Import from './pages/importPalettes';
+import Export from './pages/exportPalettes';
 import Search from './pages/search';
 import Palette from './pages/palette';
 

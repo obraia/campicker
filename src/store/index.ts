@@ -10,7 +10,7 @@ const persistConfig = {
   blacklist: [
     'menuReducers',
     'navigationReducers',
-    'paletteReducers'
+    // 'paletteReducers'
   ],
 };
 

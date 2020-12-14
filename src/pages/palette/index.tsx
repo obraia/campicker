@@ -14,11 +14,11 @@ import ExportIcon from '../../components/svg/export';
 import ConfirmButton from '../../components/confirmButton';
 import Input from '../../components/input';
 
+import PaletteModel from '../../models/PalleteModel';
 import NewColorModal from '../../components/colorModal';
 
 import {
   Container,
-  InputGroup,
   Textarea,
   ListHeader,
   ListHeaderButton,
@@ -28,13 +28,6 @@ import {
   ItemText,
   CountWhiteSpace,
 } from './styles';
-import { PaletteDescription } from '../../components/palette/styles';
-import PaletteModel from '../../models/PalleteModel';
-
-interface IPageParams {
-  paletteId: string;
-  previous: string;
-}
 
 const Palette = () => {
   // console.log('[Page render] Product');
@@ -48,34 +41,42 @@ const Palette = () => {
 
   const [paletteName, setPaletteName] = useState('');
   const [paletteDescription, setPaletteDescription] = useState('');
-  const [colorToEdit, setColorToEdit] = useState<IColor>();
+  const [colors, setColors] = useState<IColor[]>([]);
+  const [colorIndex, setColorIndex] = useState(-1);
   const [colorModalIsOpen, setcColorModalIsOpen] = useState(false);
 
-  const editColor = (color: IColor) => {
-    setColorToEdit({ ...color });
+  const newColor = () => {
+    setColorIndex(-1);
     toggleColorModal();
   }
 
-  const deleteColorById = (id: string) => {
+  const editColor = (index: number) => {
+    setColorIndex(index);
+    toggleColorModal();
+  }
+
+  const deleteColor = (index: number) => {
     Alert.alert("Atenção!", "Tem certeza que deseja apagar essa cor?", [
       {
         text: "Cancelar",
         onPress: () => null,
         style: "cancel"
       },
-      { text: "Sim", onPress: () => confirmDelete(id) }
+      { text: "Sim", onPress: () => confirmDelete(index) }
     ]);
 
-    const confirmDelete = (colorId: string) => {
-      dispatch(paletteActions.deleteColor(selectedPalette.id, colorId));
+    const confirmDelete = (index: number) => {
+      const auxColors = [...colors];
+      auxColors.splice(index, 1);
+      setColors(auxColors);
     }
   }
 
   const submitPalette = () => {
-    const newPalette: IPalette = new PaletteModel(paletteName, paletteDescription, [...selectedPalette.colors]);
+    const newPalette: IPalette = new PaletteModel(paletteName, paletteDescription, [...colors]);
     newPalette.id = selectedPalette.id;
 
-    dispatch(paletteActions.updatePalette(newPalette));
+    dispatch(paletteActions.submitPalette(newPalette));
     dispatch(navigationActions.goTo('Paletas'));
 
     history.push('/home');
@@ -85,17 +86,13 @@ const Palette = () => {
     setcColorModalIsOpen(!colorModalIsOpen);
   }
 
-  const newColor = () => {
-    setColorToEdit(undefined);
-    toggleColorModal();
-  }
-
   useEffect(() => {
     if (selectedPalette) {
       setPaletteName(selectedPalette.name);
       setPaletteDescription(selectedPalette.description);
+      setColors(selectedPalette.colors);
     }
-  }, [])
+  }, []);
 
   const descriptionComponent = useMemo(() => (
     <Textarea placeholder={'Descrição do produto'}
@@ -108,16 +105,16 @@ const Palette = () => {
   ), [paletteDescription]);
 
   const colorsComponent = useMemo(() => (
-    selectedPalette.colors.map(color => (
+    colors.map((color, index) => (
       <ItemButton
         key={color.id}
-        onPress={() => editColor(color)}
-        onLongPress={() => deleteColorById(color.id)}>
+        onPress={() => editColor(index)}
+        onLongPress={() => deleteColor(index)}>
         <ItemColorPreview style={{ backgroundColor: color.hex }} />
         <ItemText children={`${color.name} - ${color.hex}`} />
       </ItemButton>
     ))
-  ), [selectedPalette.colors]);
+  ), [colors]);
 
   return (
     <>
@@ -131,12 +128,12 @@ const Palette = () => {
         {descriptionComponent}
 
         <ListHeader>
-          <ListHeaderButton>
+          {/* <ListHeaderButton>
             <ExportIcon fill={theme.colors.primary} />
           </ListHeaderButton>
           <ListHeaderButton>
             <ImportIcon fill={theme.colors.primary} />
-          </ListHeaderButton>
+          </ListHeaderButton> */}
           <ListHeaderButton onPress={newColor}>
             <AddIcon fill={theme.colors.primary} />
           </ListHeaderButton>
@@ -147,28 +144,15 @@ const Palette = () => {
           <CountWhiteSpace />
         </ListContainer>
 
-        {/* <InputGroup>
-        <ControlQuantityButton onPress={() => setQuantity(-1)}>
-          <ArrowLeft fill={theme.colors.primary} />
-        </ControlQuantityButton>
-        <InputDescription
-          keyboardType='numeric'
-          maxLength={4}
-          value={productQuantity.toString()}
-          onChangeText={value => setDirectQuantity(value)} />
-        <ControlQuantityButton onPress={() => setQuantity(1)}>
-          <ArrowRight fill={theme.colors.primary} />
-        </ControlQuantityButton>
-      </InputGroup> */}
-
-        <ConfirmButton onPress={submitPalette} disabled={false} text={'Salvar paleta'} />
+        <ConfirmButton onPress={submitPalette} disabled={!!!paletteName} text={'Salvar paleta'} />
 
       </Container>
       {colorModalIsOpen &&
         <NewColorModal
           toggleModal={toggleColorModal}
-          paletteId={selectedPalette.id}
-          color={colorToEdit} />}
+          colors={colors}
+          setColors={setColors}
+          colorIndex={colorIndex} />}
     </>
   );
 }
