@@ -10,9 +10,7 @@ export const Container = styled.TouchableOpacity`
  
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
   background-color: ${props => lighten(0.05, props.theme.colors.background)};
-  /* border: 1px solid  ${props => props.theme.colors.primary}; */
   border-radius: 10px;
   overflow: hidden;
 `;

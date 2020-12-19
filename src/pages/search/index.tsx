@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-native";
 import Canvas, { Image } from 'react-native-canvas';
-import { getContrast, parseToRgb } from "polished";
+import { getContrast } from "polished";
 import diff from 'color-diff';
 
 import { IColor, IReducers, IRGB } from '../../interfaces';
@@ -11,7 +11,6 @@ import { Creators as navigationActions } from '../../store/ducks/navigation';
 
 import rgbToHex from '../../utils/rgbToHex';
 import hexToRgb from '../../utils/hexToRgb';
-import getDifference from '../../utils/getDifference';
 
 import Camera from '../../components/camera';
 import ConfirmButton from '../../components/confirmButton';
@@ -24,6 +23,7 @@ import {
   ColorResultPreview,
   ColorResultInfoContainer,
   ColorResultName,
+  ColorResultDescription,
   ColorResultHex
 } from './styles';
 
@@ -48,9 +48,7 @@ const Search = () => {
     const color: IRGB = hexToRgb(colorToSearch);
     const allColors: IRGB[] = [];
 
-    palettes.forEach(p => p.colors.forEach(c => {
-      allColors.push(c.rgb);
-    }));
+    palettes.forEach(p => p.colors.forEach(c => allColors.push(c.rgb)));
 
     const averegeColorRGB = diff.closest(color, allColors);
     const [resultColor] = palettes.map(p => p.colors.find(c => c.rgb === averegeColorRGB)).filter(c => c);
@@ -93,20 +91,26 @@ const Search = () => {
 
   return (
     <Container>
-      {isCameraActivated && <Camera cameraRef={cameraRef} takePicture={takePicture} />}
-      <ColorPreview style={{ backgroundColor: colorToSearch }}>
-        <ColorHexText children={colorToSearch} style={{ color: getColorTextPreview() }} />
-      </ColorPreview>
-      <ConfirmButton onPress={searchColor} disabled={false} text={'Buscar cor'} />
+
       {averegeColor &&
         <ColorResultContainer >
           <ColorResultPreview style={{ backgroundColor: averegeColor.hex }} />
-        <ColorResultInfoContainer>
-          <ColorResultName children={averegeColor.name}/>
-          <ColorResultHex children={averegeColor.hex}/>
-        </ColorResultInfoContainer>
-        </ColorResultContainer>
-      }
+          <ColorResultInfoContainer>
+            <ColorResultName children={averegeColor.name} />
+            <ColorResultDescription children={averegeColor.description} />
+            <ColorResultHex children={averegeColor.hex} />
+          </ColorResultInfoContainer>
+        </ColorResultContainer>}
+
+      <ColorPreview style={{ backgroundColor: colorToSearch }}>
+        <ColorHexText children={colorToSearch} style={{ color: getColorTextPreview() }} />
+      </ColorPreview>
+
+      {isCameraActivated && <Camera cameraRef={cameraRef} takePicture={takePicture} />}
+
+      {(colorToSearch !== '#ffffff') &&
+        <ConfirmButton onPress={searchColor} disabled={false} text={'Buscar cor'} mt={10} />}
+
       <Canvas ref={canvasRef} style={{ display: 'none' }} />
     </Container>
   );

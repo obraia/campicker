@@ -7,23 +7,6 @@ export const Container = styled.View`
   background-color: ${props => props.theme.colors.background};
 `;
 
-export const InputGroup = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: auto;
-`;
-
-export const Input = styled.TextInput`
-  flex: 1;
-  height: 50px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 18px;
-  background-color: ${props => lighten(0.1, props.theme.colors.background)};
-  color: ${props => props.theme.colors.textBackground};
-`;
-
 export const ColorPreview = styled.View`
   flex: 1;
   justify-content: center;
@@ -40,7 +23,7 @@ export const ColorHexText = styled.Text`
 export const ColorResultContainer = styled.TouchableOpacity`
   flex: 2;
   flex-direction: row;
-  margin-top: 10px;
+  margin-bottom: 10px;
   padding: 10px;
   border-radius: 10px;
   background-color: ${props => lighten(0.1, props.theme.colors.background)};
@@ -60,6 +43,11 @@ export const ColorResultInfoContainer = styled.View`
 export const ColorResultName = styled.Text`
   font-size: 16px;
   font-weight: bold;
+  color:${props => props.theme.colors.textBackground};
+`;
+
+export const ColorResultDescription = styled.Text`
+  font-size: 12px;
   color:${props => props.theme.colors.textBackground};
 `;
 

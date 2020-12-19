@@ -92,7 +92,7 @@ const Palette = () => {
       setPaletteDescription(selectedPalette.description);
       setColors(selectedPalette.colors);
     }
-  }, []);
+  }, [selectedPalette]);
 
   const descriptionComponent = useMemo(() => (
     <Textarea placeholder={'Descrição do produto'}
