@@ -51,7 +51,6 @@ export const Item = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
 `;
 
 export const ItemTitle = styled.Text`
@@ -68,6 +67,17 @@ export const Footer = styled.View`
   background-color: ${props => lighten(0.1, props.theme.colors.background)};
 `;
 
+export const RgbInput = styled.TextInput`
+  width: 50px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 18px;
+  background-color: ${props => lighten(0.1, props.theme.colors.background)};
+  color: ${props => props.theme.colors.textBackground};
+`;
+
 export const ColorPreview = styled.View`
   flex: 3;
   height: 30px;
@@ -80,14 +90,16 @@ export const ColorPreview = styled.View`
 export const FooterButton = styled.TouchableOpacity`
   flex: 1;
   height: 30px;
+  justify-content: center;
+  align-items: center;
   border-radius: 10px;
   background-color: ${props => props.theme.colors.primary};
   color: ${props => props.theme.colors.textPrimary};
 `;
 
-export const FooterText = styled.Text`
-  font-weight: bold;
-  color: ${props => props.theme.colors.textBackground};
+export const FooterButtonText = styled.Text`
+  font-size: 16px;
+  color: ${props => props.theme.colors.textPrimary};
 `;
 
 export const OutsideArea = styled.View`

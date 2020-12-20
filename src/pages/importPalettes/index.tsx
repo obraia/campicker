@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import * as DocumentPicker from 'expo-document-picker';
@@ -29,6 +29,8 @@ import ColorModel from '../../models/ColorModel';
 const ImportFile = () => {
   // console.log('[Page render] Import products');
 
+  const pageName = 'Importar arquivo';
+
   const history = useHistory();
 
   const { theme } = useSelector((state: IReducers) => state.themeReducers);
@@ -51,6 +53,7 @@ const ImportFile = () => {
           new PaletteModel(p.name, p.description, p.colors.map((c: any) =>
             new ColorModel(c.name, c.description, c.hex))));
 
+        console.log(auxPalettes)
         setPalettes(auxPalettes);
         setConfirmButtonEnable(true);
       }
@@ -69,6 +72,10 @@ const ImportFile = () => {
     dispatch(navigationActions.goTo('Paletas'));
     history.push('/home')
   }
+
+  useEffect(() => {
+    dispatch(navigationActions.goTo(pageName));
+  }, [])
 
   return (
     <Container>

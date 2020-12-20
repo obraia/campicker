@@ -24,7 +24,7 @@ const List = () => {
   const { theme } = useSelector((state: IReducers) => state.themeReducers);
   const { palettes } = useSelector((state: IReducers) => state.paletteReducers);
 
-  const [items, setItems] = useState<IPalette[]>([]);
+  const [items, setItems] = useState<IPalette[]>(palettes);
   const [pageNumber, setPageNumber] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);

@@ -45,6 +45,7 @@ export interface IProduct {
 
 export interface IColor {
   id: string;
+  paletteId?: string;
   name: string;
   description: string;
   hex: string;

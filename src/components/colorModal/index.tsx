@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import Slider from '@react-native-community/slider'
+import { useSelector } from 'react-redux';
 
-import { Creators as paletteActions } from '../../store/ducks/palette';
+import useDebounce from '../../utils/useDebounce';
+import { rgbToHex, hexToRgb } from '../../utils/colors';
 
-import { IColor } from '../../interfaces';
+import { IColor, IReducers } from '../../interfaces';
 import ColorModel from '../../models/ColorModel';
 
 import Input from '../input';
@@ -17,55 +19,55 @@ import {
   Body,
   Item,
   ItemTitle,
+  RgbInput,
   Footer,
   ColorPreview,
   FooterButton,
-  FooterText,
+  FooterButtonText,
   OutsideArea
 } from './styles';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-const NewColorModal = (props: {
+const ColorModal = (props: {
   toggleModal: () => void,
+  paletteId: string,
   colors: IColor[],
   setColors: (color: IColor[]) => void,
   colorIndex: number
 }) => {
   // console.log('[Menu] render');
 
+  const { theme } = useSelector((state: IReducers) => state.themeReducers);
+
   const [colorName, setColorName] = useState('');
   const [colorDescription, setColorDescription] = useState('');
   const [colorHex, setColorHex] = useState('#');
 
-  const dispatch = useDispatch();
-
   const submitColor = () => {
-    const color = new ColorModel(colorName, colorDescription, colorHex);
+    const color = new ColorModel(colorName, colorDescription, colorHex, props.paletteId);
 
     if (props.colorIndex === -1) {
       props.setColors([...props.colors, color]);
-      // dispatch(paletteActions.insertColor(props.paletteId, color));
     } else {
       color.id = props.colors[props.colorIndex].id;
       const auxColors = [...props.colors];
       auxColors[props.colorIndex] = color;
       props.setColors([...auxColors]);
-      // dispatch(paletteActions.updateColor(props.paletteId, color));
     }
 
     props.toggleModal();
   }
 
-  // const [isValid, setIsValid] = useState(false);
+  const setRgbColor = (R?: number, G?: number, B?: number) => {
+    const rgb = hexToRgb(colorHex);
 
-  // const isValid = () => {
-  //   return colorName && (/^#[0-9A-F]{6}$/i.test(colorHex))
-  // }
+    if (R !== undefined) rgb.R = R;
+    else if (G !== undefined) rgb.G = G;
+    else if (B !== undefined) rgb.B = B;
 
-  // useEffect(() => {
-  //   setIsValid((/^#[0-9A-F]{6}$/i.test(colorHex)));
-  // }, [colorName, colorHex])
+    setColorHex(rgbToHex(rgb));
+  }
 
+  // -> Update inputs values in edit mode
   useEffect(() => {
     if (props.colorIndex !== -1) {
       setColorName(props.colors[props.colorIndex].name);
@@ -73,7 +75,6 @@ const NewColorModal = (props: {
       setColorHex(props.colors[props.colorIndex].hex);
     }
   }, [props.colorIndex])
-
 
   return (
     <>
@@ -100,10 +101,71 @@ const NewColorModal = (props: {
               placeholder={'Hexadecimal da cor'}
               value={colorHex}
               onChangeText={v => setColorHex(v)} />
+
+            <Item>
+              <ItemTitle children={'R'} />
+              <Slider
+                style={{ flex: 1 }}
+                step={1}
+                value={useDebounce(hexToRgb(colorHex).R, 500)}
+                onValueChange={value => setRgbColor(value, undefined, undefined)}
+                minimumValue={0}
+                maximumValue={255}
+                thumbTintColor={theme.colors.primary}
+                minimumTrackTintColor={theme.colors.primary} />
+
+              <RgbInput
+                keyboardType={'numeric'}
+                maxLength={3}
+                value={hexToRgb(colorHex).R.toString()}
+                defaultValue={'0'}
+                onChangeText={value => setRgbColor(Number(value), undefined, undefined)} />
+            </Item>
+
+            <Item>
+              <ItemTitle children={'G'} />
+              <Slider
+                style={{ flex: 1 }}
+                step={1}
+                value={useDebounce(hexToRgb(colorHex).G, 500)}
+                onValueChange={value => setRgbColor(undefined, value, undefined)}
+                minimumValue={0}
+                maximumValue={255}
+                thumbTintColor={theme.colors.primary}
+                minimumTrackTintColor={theme.colors.primary} />
+
+              <RgbInput
+                keyboardType={'numeric'}
+                maxLength={3}
+                value={hexToRgb(colorHex).G.toString()}
+                onChangeText={value => setRgbColor(undefined, Number(value), undefined)} />
+            </Item>
+
+            <Item>
+              <ItemTitle children={'B'} />
+              <Slider
+                style={{ flex: 1 }}
+                step={1}
+                value={useDebounce(hexToRgb(colorHex).B, 500)}
+                onValueChange={value => setRgbColor(undefined, undefined, value)}
+                minimumValue={0}
+                maximumValue={255}
+                thumbTintColor={theme.colors.primary}
+                minimumTrackTintColor={theme.colors.primary} />
+
+              <RgbInput
+                keyboardType={'numeric'}
+                maxLength={3}
+                value={hexToRgb(colorHex).B.toString()}
+                onChangeText={value => setRgbColor(undefined, undefined, Number(value))} />
+            </Item>
+
           </Body>
           <Footer>
             <ColorPreview style={{ backgroundColor: colorHex }} />
-            <FooterButton disabled={!!(!colorName)} onPress={submitColor} />
+            <FooterButton disabled={!!(!colorName)} onPress={submitColor}>
+              <FooterButtonText children={'salvar'} />
+            </FooterButton>
           </Footer>
         </Modal>
       </Container>
@@ -111,4 +173,4 @@ const NewColorModal = (props: {
   );
 }
 
-export default NewColorModal;
+export default ColorModal;

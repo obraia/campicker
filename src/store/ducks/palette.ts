@@ -1,6 +1,6 @@
 import { createActions, createReducer } from 'reduxsauce';
 
-import { IPaletteState, IPalette } from "../../interfaces";
+import { IPaletteState, IPalette, IColor } from "../../interfaces";
 import PalleteModel from '../../models/PalleteModel';
 import newID from '../../utils/generateID';
 
@@ -19,6 +19,7 @@ const INITIAL_STATE: IPaletteState = {
 
 const importPalettes = (state = INITIAL_STATE, action: any) => {
   state.palettes = action.palettes;
+  state.palettes.forEach(p => p.colors.forEach((c: IColor) => c.paletteId = p.id));
   state.palettes.push({
     id: '0000',
     name: '',
@@ -41,6 +42,7 @@ const submitPalette = (state = INITIAL_STATE, action: any) => {
   if (paletteIndex !== -1) {
     if (action.palette.id === '0000') {
       action.palette.id = newID();
+      action.palette.colors.forEach((c: IColor) => c.paletteId = action.palette.id);
       palettes.push({
         id: '0000',
         name: '',

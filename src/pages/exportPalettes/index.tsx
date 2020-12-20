@@ -1,10 +1,12 @@
 import React, { memo, useState, useMemo, useEffect } from 'react';
 import { Alert } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import moment from 'moment';
 import { Switch } from 'react-native-paper';
+
+import { Creators as navigationActions } from '../../store/ducks/navigation';
 
 import { IReducers, IProduct } from '../../interfaces';
 
@@ -27,11 +29,15 @@ import {
 const ExportFile = () => {
   // console.log('[Page render] Export products');
 
+  const pageName = 'Exportar arquivo';
+
   const { theme } = useSelector((state: IReducers) => state.themeReducers);
   const { palettes } = useSelector((state: IReducers) => state.paletteReducers);
 
   const [fileName, setFileName] = useState('palettes-' + moment().format('DD-MM-YYYY-HHmm'));
   const [fileType, setFileType] = useState('.json');
+
+  const dispatch = useDispatch();
 
   const exportFile = async () => {
     const fileUri = `${FileSystem.documentDirectory + fileName + fileType}`;
@@ -59,6 +65,10 @@ const ExportFile = () => {
   const toggleFileType = () => {
     setFileType(fileType === '.json' ? '.txt' : '.json');
   }
+
+  useEffect(() => {
+    dispatch(navigationActions.goTo(pageName));
+  }, [])
 
   const previewListComponent = useMemo(() => (
     <PreviewContainer>

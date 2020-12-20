@@ -4,10 +4,10 @@ import { lighten } from 'polished';
 import { BarCodeScanner as Scanner } from 'expo-barcode-scanner';
 import { Camera } from 'expo-camera';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export const Container = styled.TouchableOpacity`
- 
+  width: 100%;
   justify-content: center;
   align-items: center;
   background-color: ${props => lighten(0.05, props.theme.colors.background)};

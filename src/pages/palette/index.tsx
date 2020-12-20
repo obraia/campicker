@@ -91,7 +91,9 @@ const Palette = () => {
       setPaletteName(selectedPalette.name);
       setPaletteDescription(selectedPalette.description);
       setColors(selectedPalette.colors);
+      dispatch(navigationActions.goTo(selectedPalette.id !== '0000' ? 'Paleta: ' + selectedPalette.name : 'Nova paleta'));
     }
+
   }, [selectedPalette]);
 
   const descriptionComponent = useMemo(() => (
@@ -150,6 +152,7 @@ const Palette = () => {
       {colorModalIsOpen &&
         <NewColorModal
           toggleModal={toggleColorModal}
+          paletteId={selectedPalette.id}
           colors={colors}
           setColors={setColors}
           colorIndex={colorIndex} />}

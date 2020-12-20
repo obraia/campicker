@@ -3,12 +3,20 @@ import { lighten } from 'polished';
 
 export const Container = styled.View`
   flex: 1;
+  align-items: center;
   padding: 10px;
   background-color: ${props => props.theme.colors.background};
 `;
 
-export const ColorPreview = styled.View`
+export const ContainerRow = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const ColorPreview = styled.TouchableOpacity`
   flex: 1;
+  width: 100%;
   justify-content: center;
   align-items: center;
   min-height: 30px;
