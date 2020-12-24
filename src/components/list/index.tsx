@@ -16,7 +16,6 @@ import {
   PaginationDetails,
   WhiteSpace
 } from './styles';
-import PalleteModel from '../../models/PalleteModel';
 
 const List = () => {
   // console.log('[Component render] Product list');
@@ -28,6 +27,7 @@ const List = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const auxPalettes = [...palettes];
@@ -39,11 +39,11 @@ const List = () => {
     setNumberOfPages(Math.ceil((items.length) / itemsPerPage));
   }, [items.length]);
 
-  const filter = (value: string) => {
+  const filter = () => {
     const auxPalettes = [...palettes];
     auxPalettes.pop();
 
-    const filteredItems = auxPalettes.filter(p => p.name.toLowerCase().includes(value.toLowerCase()));
+    const filteredItems = auxPalettes.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
     setItems(filteredItems);
   }
 
@@ -62,15 +62,15 @@ const List = () => {
   return (
     <Container>
       <HeaderContainer>
-        <SearchInput placeholder={'Pesquisar'} onChangeText={value => filter(value)} />
-        <ContainerButton>
+        <SearchInput placeholder={'Pesquisar'} value={search} onChangeText={value => setSearch(value)} onBlur={filter}/>
+        <ContainerButton onPress={filter}>
           <SearchIcon fill={theme.colors.primary} size={'15px'} />
         </ContainerButton>
       </HeaderContainer>
 
       {items?.slice(pageNumber * itemsPerPage, (pageNumber + 1) * itemsPerPage).map((pallete, index) =>
-          <Pallete key={index} pallete={pallete} />
-        )}
+        <Pallete key={index} pallete={pallete} />
+      )}
 
       <HeaderContainer>
         <PaginationDetails>Total: {items.length} - Página: {pageNumber + 1}/{numberOfPages} </PaginationDetails>

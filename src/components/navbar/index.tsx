@@ -61,8 +61,8 @@ const Navbar = () => {
       elevation: 6
     }}>
 
-      {items.map(item => (
-        <ButtonContainer onPress={() => goTo(item.route)}>
+      {items.map((item, index) => (
+        <ButtonContainer key={index} onPress={() => goTo(item.route)}>
           <Button
             style={{ backgroundColor: location.pathname === item.route ? theme.colors.primary : '#0000000a' }}>
             <item.icon fill={location.pathname === item.route ? theme.colors.textPrimary : theme.colors.primary} />

@@ -40,7 +40,7 @@ const Search = () => {
   const history = useHistory();
 
   const { theme } = useSelector((state: IReducers) => state.themeReducers);
-  const { palettes, selectedPalette } = useSelector((state: IReducers) => state.paletteReducers);
+  const { palettes } = useSelector((state: IReducers) => state.paletteReducers);
   const dispatch = useDispatch();
 
   const [isCameraActivated, setIsCameraActivated] = useState(true);
@@ -113,7 +113,7 @@ const Search = () => {
   return (
     <Container>
       {averegeColor &&
-        <ColorResultContainer onPress={() => goToPalette(averegeColor.paletteId)}>
+        <ColorResultContainer onPress={() => goToPalette(averegeColor.paletteId!)}>
           <ColorResultPreview style={{ backgroundColor: averegeColor.hex }} />
           <ColorResultInfoContainer>
             <ContainerRow>

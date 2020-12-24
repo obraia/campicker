@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Base app",
-    "slug": "base-app",
-    "version": "1.0.0",
+    "name": "Campicker",
+    "slug": "campicker",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -20,8 +20,8 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.obraia.base",
-      "versionCode": 2,
+      "package": "com.obraia.campicker",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E8E8E8",
         "foregroundImage": "./assets/icon-adaptive.png"
