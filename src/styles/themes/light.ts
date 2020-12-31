@@ -9,10 +9,10 @@ export default {
     textSecondary: '#404040',
     textBackground: '#696969',
     danger: '#dc3545',
-    color1: '#ff8759',
-    color2: '#f836ff',
-    color3: '#30e80c',
-    color4: '#ff0f4b',
+    color1: '#ca8532', // -> code key
+    color2: '#1154e6', // -> code value string
+    color3: '#76c627', // -> code value
+    color4: '#000000', // -> code element
     color5: '#8b42ff',
     color6: '#0cd8f7',
     color7: '#8b42ff',

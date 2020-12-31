@@ -27,7 +27,7 @@ const List = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [search, setSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const auxPalettes = [...palettes];
@@ -39,11 +39,11 @@ const List = () => {
     setNumberOfPages(Math.ceil((items.length) / itemsPerPage));
   }, [items.length]);
 
-  const filter = () => {
+  const handleSearch = () => {
     const auxPalettes = [...palettes];
     auxPalettes.pop();
 
-    const filteredItems = auxPalettes.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+    const filteredItems = auxPalettes.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
     setItems(filteredItems);
   }
 
@@ -62,8 +62,8 @@ const List = () => {
   return (
     <Container>
       <HeaderContainer>
-        <SearchInput placeholder={'Pesquisar'} value={search} onChangeText={value => setSearch(value)} onBlur={filter}/>
-        <ContainerButton onPress={filter}>
+        <SearchInput placeholder={'Pesquisar'} value={searchTerm} onChangeText={value => setSearchTerm(value)} onBlur={handleSearch} />
+        <ContainerButton onPress={handleSearch}>
           <SearchIcon fill={theme.colors.primary} size={'15px'} />
         </ContainerButton>
       </HeaderContainer>

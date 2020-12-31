@@ -3,7 +3,7 @@ import { IAuthState } from "../../interfaces";
 
 
 const INITIAL_STATE: IAuthState = {
-  isAuthenticated: false,
+  isAuthenticated: true,
   token: "",
 }
 

@@ -4,7 +4,7 @@ import { lighten, transparentize } from 'polished';
 export const Input = styled.TextInput.attrs(props => ({
   placeholderTextColor: transparentize(0.5, props.theme.colors.textBackground)
 }))`
-  width: 100%;
+  flex: 1;
   height: 50px;
   padding: 10px;
   border-radius: 10px;

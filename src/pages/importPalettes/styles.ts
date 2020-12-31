@@ -23,14 +23,8 @@ export const ImportButton = styled.TouchableOpacity`
   background-color: ${props => lighten(0.1, props.theme.colors.background)};
 `;
 
-export const FileName = styled.TextInput`
-  width: 100%;
-  height: 50px;
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 18px;
-  background-color: ${props => lighten(0.1, props.theme.colors.background)};
-  color: ${props => props.theme.colors.primary};
+export const InputGroup = styled.View`
+  flex-direction: row;
 `;
 
 export const PreviewContainer = styled.ScrollView`

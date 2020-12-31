@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useLocation } from "react-router-native";
+import { useHistory, useLocation } from 'react-router-native';
 
 import { IReducers } from '../../interfaces';
 import { Creators as paletteActions } from '../../store/ducks/palette';
@@ -25,6 +25,10 @@ const Navbar = () => {
   const goTo = (endpoint: string) => {
     if (endpoint === '/palette') dispatch(paletteActions.selectPalette('0000'));
     history.push(endpoint);  
+  }
+
+  const checkRoute = (itemRoute: string) => {
+    return location.pathname === itemRoute;
   }
 
   const items = [
@@ -64,8 +68,8 @@ const Navbar = () => {
       {items.map((item, index) => (
         <ButtonContainer key={index} onPress={() => goTo(item.route)}>
           <Button
-            style={{ backgroundColor: location.pathname === item.route ? theme.colors.primary : '#0000000a' }}>
-            <item.icon fill={location.pathname === item.route ? theme.colors.textPrimary : theme.colors.primary} />
+            style={{ backgroundColor: checkRoute(item.route) ? theme.colors.primary : '#0000000a' }}>
+            <item.icon fill={checkRoute(item.route) ? theme.colors.textPrimary : theme.colors.primary} />
           </Button>
         </ButtonContainer>
       ))}

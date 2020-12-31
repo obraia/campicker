@@ -14,11 +14,14 @@ import { Creators as navigationActions } from '../../store/ducks/navigation';
 import UploadIcon from '../../components/svg/upload';
 import Input from '../../components/input';
 import ConfirmButton from '../../components/confirmButton';
+import QuestionButton from '../../components/questionButton';
+
+import PaletteFormatModal from '../../components/paletteFormatModal';
 
 import {
   Container,
   ImportButton,
-  FileName,
+  InputGroup,
   PreviewContainer,
   PreviewContainerWhiteSpace,
   PreviewLine,
@@ -39,6 +42,7 @@ const ImportFile = () => {
   const [fileName, setFileName] = useState('');
   const [palettes, setPalettes] = useState<IPalette[]>([]);
   const [confirmButtonEnable, setConfirmButtonEnable] = useState(false);
+  const [infoModalIsOpen, setInfoModalIsOpen] = useState(true);
 
   const onpenFileDialog = async () => {
     const fileSelected = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
@@ -73,29 +77,44 @@ const ImportFile = () => {
     history.push('/home')
   }
 
+  const toggleInfoModal = () => {
+    setInfoModalIsOpen(!infoModalIsOpen);
+  }
+
   useEffect(() => {
     dispatch(navigationActions.goTo(pageName));
   }, [])
 
   return (
-    <Container>
-      <ImportButton onPress={onpenFileDialog}>
-        <UploadIcon fill={theme.colors.primary} />
-      </ImportButton>
-      <Input value={fileName} placeholder={'Nome do arquivo'} editable={false} />
-      <PreviewContainer>
-        {palettes?.slice(0, 5).map((p, index) => (
-          <PreviewLine key={p.id}
-            onLongPress={() => deleteLine(index)}>
-            <PreviewLineText>
-              {p.name + ' - ' + p.description}
-            </PreviewLineText>
-          </PreviewLine>
-        ))}
-        <PreviewContainerWhiteSpace />
-      </PreviewContainer>
-      <ConfirmButton onPress={importFile} disabled={!confirmButtonEnable} text={'Importar arquivo'} />
-    </Container>
+    <>
+      <Container>
+        <ImportButton onPress={onpenFileDialog}>
+          <UploadIcon fill={theme.colors.primary} />
+        </ImportButton>
+
+        <InputGroup>
+          <Input value={fileName} placeholder={'Nome do arquivo'} editable={false} />
+          <QuestionButton onPress={toggleInfoModal} ml={10}/>
+        </InputGroup>
+
+        <PreviewContainer>
+          {palettes?.slice(0, 5).map((p, index) => (
+            <PreviewLine key={p.id}
+              onLongPress={() => deleteLine(index)}>
+              <PreviewLineText>
+                {p.name + ' - ' + p.description}
+              </PreviewLineText>
+            </PreviewLine>
+          ))}
+          <PreviewContainerWhiteSpace />
+        </PreviewContainer>
+
+
+        <ConfirmButton onPress={importFile} disabled={!confirmButtonEnable} text={'Importar arquivo'} />
+
+      </Container>
+      {infoModalIsOpen && <PaletteFormatModal toggleModal={toggleInfoModal} />}
+    </>
   );
 }
 
